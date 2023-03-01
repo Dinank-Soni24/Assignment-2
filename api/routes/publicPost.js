@@ -5,10 +5,10 @@ const router = express.Router();
 const publicPostController = require('../controller/publicPost')
 
 //for public
-router.get('/post', publicPostController.public_post);
-router.get('/post/:postsId', publicPostController.public_selected_post);
-router.get('/name', publicPostController.public_post_name);
-router.get('/content', publicPostController.public_post_content);
-router.get('/category', publicPostController.public_post_category);
+router.get('/post', publicPostController.publicPost);
+router.get('/post/:postsId', publicPostController.publicSelectedPost);
+router.get('/name', publicPostController.publicPostName);
+router.get('/content', publicPostController.publicPostContent);
+router.get('/category', publicPostController.publicPostCategory);
 
 module.exports = router;

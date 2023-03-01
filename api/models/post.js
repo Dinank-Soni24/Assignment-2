@@ -9,7 +9,7 @@ const postsSchema = mongoose.Schema({
     content: {type: String, required: true},
     publishedDate: {type: Date, required: true, default: Date.now()},
     createdBy: {type: String, required: true},
-    slug: { type: String, slug: "content" }
+    slug: { type: String, slug: "title" }
 });
 
 module.exports = mongoose.model('post', postsSchema);

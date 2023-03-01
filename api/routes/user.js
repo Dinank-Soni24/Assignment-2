@@ -2,21 +2,21 @@ const express = require('express');
 const router = express.Router();
 
 //add controller
-const AdminController = require('../controller/user');
+const userController = require('../controller/user');
 
 //add middleware
 const checkAuth = require('../middleware/check-auth');
 
-// signup admin
-router.post('/signup',checkAuth, AdminController.Admin_create);
+// signup user
+router.post('/signup', userController.userCreate);
 
-// login admin
-router.post('/login', AdminController.Admin_login);
+// login user
+router.post('/login', userController.userLogin);
 
-// logout admin
-router.get('/logout',checkAuth, AdminController.Admin_logout);
+// logout user
+router.get('/logout',checkAuth, userController.userLogout);
 
-// delete admin
-router.delete('/:userId',checkAuth , AdminController.Admin_delete);
+// delete user
+router.delete('/:userId',checkAuth , userController.userDelete);
 
 module.exports = router;

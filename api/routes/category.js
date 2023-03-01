@@ -8,10 +8,10 @@ const categoryController = require('../controller/category');
 const checkAuth = require('../middleware/check-auth');
 
 //get requerst for all
-router.post('/',checkAuth , categoryController.category_create);
-router.get('/',checkAuth , categoryController.category_get_all);
-router.get('/:categoryId',checkAuth , categoryController.category_get_one);
-router.patch('/:categoryId',checkAuth , categoryController.category_update);
-router.delete('/:categoryId',checkAuth , categoryController.category_deleted);
+router.post('/',checkAuth , categoryController.categoryCreate);
+router.get('/',checkAuth , categoryController.categoryGetAll);
+router.get('/:categoryId',checkAuth , categoryController.categoryGetOne);
+router.patch('/:categoryId',checkAuth , categoryController.categoryUpdate);
+router.delete('/:categoryId',checkAuth , categoryController.categoryDeleted);
 
 module.exports = router;

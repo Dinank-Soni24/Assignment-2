@@ -2,7 +2,7 @@ const category = require('../models/category');
 const mongoose = require('mongoose');
 
 // Add the category (post)
-exports.category_create = (req, res) => {
+exports.categoryCreate = (req, res) => {
     category.find({ categoryName: req.body.categoryName })
         .exec()
         .then(Category => {
@@ -31,7 +31,7 @@ exports.category_create = (req, res) => {
 }
 
 // Get the category (get)
-exports.category_get_all = (req, res) => {
+exports.categoryGetAll = (req, res) => {
     category.find()
         .exec()
         .then(docs => {
@@ -47,7 +47,7 @@ exports.category_get_all = (req, res) => {
 }
 
 // Get one category
-exports.category_get_one = (req, res) => {
+exports.categoryGetOne = (req, res) => {
     const id = req.params.categoryId;
     category.findById(id)
         .then(doc => {
@@ -70,7 +70,7 @@ exports.category_get_one = (req, res) => {
 }
 
 // update the category (patch)
-exports.category_update = (req, res) => {
+exports.categoryUpdate = (req, res) => {
     const id = req.params.categoryId;
 
     category.updateMany({ _id: id }, { $set: req.body })
@@ -88,8 +88,8 @@ exports.category_update = (req, res) => {
 }
 
 //delete the category (delete)
-exports.category_deleted = (req, res) => {
-    category.remove({ _id: req.params.categoryId })
+exports.categoryDeleted = (req, res) => {
+    category.findByIdAndRemove({ _id: req.params.categoryId })
         .exec()
         .then(result => {
             res.status(200).json({

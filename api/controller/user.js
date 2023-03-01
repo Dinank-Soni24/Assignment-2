@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-// signup Admin
-exports.Admin_create = (req, res, next) => {
+// signup user
+exports.userCreate = (req, res, next) => {
     User.find({ email: req.body.email })
         .exec()
         .then(user => {
@@ -23,7 +23,8 @@ exports.Admin_create = (req, res, next) => {
                         const user = new User({
                             _id: new mongoose.Types.ObjectId(),
                             email: req.body.email,
-                            password: hash
+                            password: hash,
+                            token: " ",
                         });
                         user.save()
                             .then(result => {
@@ -46,9 +47,8 @@ exports.Admin_create = (req, res, next) => {
 }
 
 //login user
-exports.Admin_login = (req, res, next) => {
+exports.userLogin = (req, res, next) => {
     User.find({ email: req.body.email })
-        .exec()
         .then(user => {
             if (user.length < 1) {
                 return res.status(401).json({
@@ -71,22 +71,20 @@ exports.Admin_login = (req, res, next) => {
                             expiresIn: "1h"
                         }
                     )
-                    User.updateOne({ _id: user._id }, { Token: token })
+                    User.updateOne({ _id: user[0]._id }, { token: token })
                         .exec()
                         .then(result => {
-                            console.log('Token saved to user:', user.email);
+                            console.log('Token saved to user:', user[0].email);
                         })
                         .catch(err => {
                             console.log('Error updating user:', err);
                         })
-                    return res.status(200).json({
+                    res.status(200).json({
                         message: 'auth successful',
                         token: token
                     });
                 }
-                res.status(401).json({
-                    message: 'Auth failed'
-                })
+                res.status(401)
             })
         })
         .catch(err => {
@@ -97,23 +95,34 @@ exports.Admin_login = (req, res, next) => {
         })
 }
 
-//logout admin
+//logout user
 
-exports.Admin_logout = (req, res, next) => {
-    var token = req.headers.authorization.split(" ")[1];
-    console.log(token);
-    token = null
-    res.set('Authorization', `Bearer ${token}`)
-    console.log(token);
-    res.status(200).json({
-        message: 'Logout successful'
+exports.userLogout = (req, res, next) => {
+    const userId = req.userData.userId;
+    console.log(userId);
+
+    User.findById(userId)
+    .then(user => {
+      user.token = " ";
+      user.save()
+        .then(result => {
+          res.status(200).json({ message: "User logged out successfully" });
+        })
+        .catch(err => {
+          console.log(err);
+          res.status(500).json({ error: err });
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: err });
     });
 }
 
 
-//delete admin
-exports.Admin_delete = (req, res, next) => {
-    User.remove({ _id: req.params.userId })
+//delete user
+exports.userDelete = (req, res, next) => {
+    User.findByIdAndRemove({ _id: req.params.userId })
         .exec()
         .then(result => {
             res.status(200).json({

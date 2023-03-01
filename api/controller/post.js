@@ -3,7 +3,7 @@ const category = require('../models/category');
 const mongoose = require('mongoose');
 
 // add the post
-exports.post_create = (req, res) => {
+exports.postCreate = (req, res) => {
     category.findById(req.body.categoryId)
         .then(Category => {
             if (!Category) {
@@ -12,14 +12,14 @@ exports.post_create = (req, res) => {
                 })
             }
             const Posts = new posts({
-                _id: mongoose.Types.ObjectId(),
+                _id: new mongoose.Types.ObjectId(),
                 categoryId: req.body.categoryId,
                 title: req.body.title,
                 content: req.body.content,
                 createdBy: req.body.createdBy,
                 // slug: req.body.slug
             });
-            return Posts.save()
+            Posts.save()
 
         })
         .then(result => {
@@ -36,81 +36,73 @@ exports.post_create = (req, res) => {
 }
 
 //get all post
-exports.post_get_all = (req, res) => {
+exports.postGetAll = (req, res) => {
     posts.find()
-    .then(docs => {
-        res.status(200).json({
-            count: docs.length,
-            Posts: docs
+        .then(docs => {
+            res.status(200).json({
+                count: docs.length,
+                Posts: docs
+            })
         })
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            })
         })
-    })
 }
 
 //get one post
-exports.post_get_one = (req, res) => {
+exports.postGetOne = (req, res) => {
     posts.findById(req.params.postsId)
-    .then( docs => {
-        if(!docs){
-            return res.status(404).json({
-                message: 'post is not found'
+        .then(docs => {
+            if (!docs) {
+                return res.status(404).json({
+                    message: 'post is not found'
+                })
+            }
+            res.status(200).json({
+                Post: docs
             })
-        }
-        res.status(200).json({
-            Post: docs
         })
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: err
-        })
-    });
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        });
 }
 
 //update posts
-exports.post_update = (req, res) => {
+exports.postUpdate = (req, res) => {
     const id = req.params.postsId;
 
-    posts.updateMany({_id: id}, {$set: req.body})
-    .then(result => {
-        res.status(200).json({
-            message: 'posts updated'
+    posts.updateMany({ _id: id }, { $set: req.body })
+        .then(result => {
+            res.status(200).json({
+                message: 'posts updated'
+            })
         })
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
         });
-    });
 }
 
 //delete posts
-exports.post_delete = (req, res) => {
+exports.postDelete = (req, res) => {
     const id = req.params.postsId;
-    posts.findById(req.body.postsId)
-    .then( Posts => {
-        if(!Posts) {
-            return res.status(404).json({
-                message: 'Post is not found'
+    posts.findByIdAndRemove({_id: id})
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'post is deleted'
             })
-        }
-        return posts.remove({_id: id})
-    })
-    
-    .then(result => {
-        res.status(200).json({
-            message: 'post is deleted'
         })
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
         });
-    });
 
 }
