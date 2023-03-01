@@ -20,12 +20,17 @@ exports.postCreate = (req, res) => {
                 // slug: req.body.slug
             });
             Posts.save()
-
-        })
-        .then(result => {
-            res.status(201).json({
-                message: 'Post is created Successfully'
-            })
+                .then(result => {
+                    res.status(201).json({
+                        message: 'Post is created Successfully'
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error: err
+                    });
+                });
         })
         .catch(err => {
             console.log(err);
@@ -33,6 +38,7 @@ exports.postCreate = (req, res) => {
                 error: err
             });
         });
+
 }
 
 //get all post
@@ -92,7 +98,7 @@ exports.postUpdate = (req, res) => {
 //delete posts
 exports.postDelete = (req, res) => {
     const id = req.params.postsId;
-    posts.findByIdAndRemove({_id: id})
+    posts.findByIdAndRemove({ _id: id })
         .exec()
         .then(result => {
             res.status(200).json({
