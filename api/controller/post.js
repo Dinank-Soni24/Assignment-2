@@ -80,19 +80,40 @@ exports.postGetOne = (req, res) => {
 //update posts
 exports.postUpdate = (req, res) => {
     const id = req.params.postsId;
-    category.findById(req.body.categoryId)
-    .then(foundCategory => {
-        console.log(foundCategory);
-        if(!foundCategory){
-            return res.status(404).json({
-                message: "category is not found"
-            })
-        }
-        posts.updateMany({ _id: id }, { $set: req.body })
-        .then(result => {
-            res.status(200).json({
-                message: 'posts updated'
-            })
+    posts.findById(id)
+        .then(docs => {
+            if (!docs) {
+                return res.status(404).json({
+                    message: "Post is not found"
+                })
+            }
+            category.findById(req.body.categoryId)
+                .then(foundCategory => {
+                    console.log(foundCategory);
+                    if (!foundCategory) {
+                        return res.status(404).json({
+                            message: "category is not found"
+                        })
+                    }
+                    posts.updateMany({ _id: id }, { $set: req.body })
+                        .then(result => {
+                            res.status(200).json({
+                                message: 'posts updated'
+                            })
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(500).json({
+                                error: err
+                            });
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error: err
+                    });
+                });
         })
         .catch(err => {
             console.log(err);
@@ -100,14 +121,8 @@ exports.postUpdate = (req, res) => {
                 error: err
             });
         });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
-        });
-    });
-    
+
+
 }
 
 //delete posts
