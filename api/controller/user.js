@@ -122,7 +122,14 @@ exports.userLogout = (req, res, next) => {
 
 //delete user
 exports.userDelete = (req, res, next) => {
-    User.findByIdAndRemove({ _id: req.params.userId })
+    User.findById(req.params.userId)
+    .then(users => {
+        if(!users) {
+            return  res.status(404).json({
+                message: "user is not found"
+            })
+        }
+        User.findByIdAndRemove({ _id: req.params.userId })
         .exec()
         .then(result => {
             res.status(200).json({
@@ -135,4 +142,12 @@ exports.userDelete = (req, res, next) => {
                 error: err
             });
         });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+    
 }

@@ -97,18 +97,33 @@ exports.postUpdate = (req, res) => {
 
 //delete posts
 exports.postDelete = (req, res) => {
-    const id = req.params.postsId;
-    posts.findByIdAndRemove({ _id: id })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'post is deleted'
-            })
+    posts.findById(req.params.postsId)
+        .then(Posts => {
+            if (!Posts) {
+                return res.status(404).json({
+                    message: "post is not found"
+                })
+            }
+            const id = req.params.postsId;
+            posts.findByIdAndRemove({ _id: id })
+                .exec()
+                .then(result => {
+                    res.status(200).json({
+                        message: 'post is deleted'
+                    })
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
         })
         .catch(err => {
+            console.log(err);
             res.status(500).json({
                 error: err
             });
         });
+
 
 }

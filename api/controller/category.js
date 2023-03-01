@@ -89,16 +89,31 @@ exports.categoryUpdate = (req, res) => {
 
 //delete the category (delete)
 exports.categoryDeleted = (req, res) => {
-    category.findByIdAndRemove({ _id: req.params.categoryId })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'Category is deleted'
-            })
+    category.findById(req.params.categoryId)
+        .then(Category => {
+            if (!Category) {
+                return res.status(404).json({
+                    message: "category is not found"
+                })
+            }
+            category.findByIdAndRemove({ _id: req.params.categoryId })
+                .exec()
+                .then(result => {
+                    res.status(200).json({
+                        message: 'Category is deleted'
+                    })
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        error: err,
+                    })
+                })
         })
         .catch(err => {
+            console.log(err);
             res.status(500).json({
-                error: err,
-            })
-        })
+                error: err
+            });
+        });
+
 }
