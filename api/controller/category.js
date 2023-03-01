@@ -72,19 +72,37 @@ exports.categoryGetOne = (req, res) => {
 // update the category (patch)
 exports.categoryUpdate = (req, res) => {
     const id = req.params.categoryId;
-
-    category.updateMany({ _id: id }, { $set: req.body })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'Category is Updated'
-            })
+    const categoryName = req.body.categoryName;
+    console.log(categoryName);
+    
+    category.findOne({ categoryName: categoryName })
+        .then(foundCategory => {
+            console.log(foundCategory);
+            if (foundCategory && foundCategory._id != id) {
+                return res.status(409).json({
+                    message: "Category name already exists"
+                });
+            }
+            category.updateMany({ _id: id }, { $set: req.body })
+                .exec()
+                .then(result => {
+                    res.status(200).json({
+                        message: 'Category is Updated'
+                    })
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        error: err,
+                    })
+                })
         })
         .catch(err => {
+            console.log(err);
             res.status(500).json({
-                error: err,
-            })
-        })
+                error: err
+            });
+        });
+
 }
 
 //delete the category (delete)
